@@ -1,10 +1,11 @@
-class CreateShoppingCarts < ActiveRecord::Migration[5.2]
-  def change
-    create_table :shopping_carts do |t|
-+     t.boolean :buy_flag, null: false, default: false
-+     t.references :user, foreign_key: true
+class ShoppingCart < ApplicationRecord
+  acts_as_shopping_cart
+  
+  scope :set_user_cart, -> (user) { user_cart = where(user_id: user.id, buy_flag: false)&.last
+                               user_cart.nil? ? ShoppingCart.create(user_id: user.id)
+                                              : user_cart }
 
-      t.timestamps
-    end
+  def tax_pct
+    0
   end
 end
